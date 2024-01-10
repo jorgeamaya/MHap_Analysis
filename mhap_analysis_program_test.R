@@ -1,6 +1,8 @@
 source('/amplseq_required_libraries.R')
 source('/amplseq_functions.R')
 
+library(argparse)
+
 # Create ArgumentParser object
 params <- ArgumentParser()
  
