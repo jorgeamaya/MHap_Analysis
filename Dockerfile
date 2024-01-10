@@ -43,7 +43,10 @@ ENV PATH=/root/google-cloud-sdk/bin/:${PATH}
 
 RUN apt-get install -y gcc python3-dev python3-setuptools && pip3 uninstall -y crcmod && pip3 install --no-cache-dir -U crcmod
 
-Copy Code Code
-
-Copy Gates_Colombia_metadata.csv Gates_Colombia_metadata.csv
-Copy cigar_tables cigar_tables
+COPY GADMTools GADMTools
+COPY amplseq_functions.R amplseq_functions.R
+COPY amplseq_required_libraries.R amplseq_required_libraries.R
+COPY col_pairwise_relatedness.csv col_pairwise_relatedness.csv
+COPY hmmloglikelihood.cpp hmmloglikelihood.cpp
+COPY mhap_analysis_program.Rmd mhap_analysis_program.Rmd
+COPY render_report.R render_report.R

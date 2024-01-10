@@ -2341,3 +2341,7 @@ format_pop_pairs <- function(pop_pairs) {
   result_vector <- gsub("(\\w+)-(\\w+)", "\\1-\\2", result_vector)
   return(result_vector)
 }
+
+adjust_camel_case_name <- function(strings) {
+  gsub("(?<=[a-z])(?=[A-Z])", " ", strings, perl = TRUE)
+}

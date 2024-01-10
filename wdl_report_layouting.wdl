@@ -2,69 +2,65 @@ version 1.0
 
 workflow report_layouting {
 	input {
-		String path_to_cigars
-		String metadata_source
-		File ls_locus_remove
 		String sample_id_pattern = 'SP'
 		String pop_colors
 		String pop_levels
-		File path_to_markers
 	}
 
 	call report_layouting_process {
 		input:	
-			path_to_cigars = path_to_cigars,
-			ls_locus_remove = ls_locus_remove,
-			metadata_source = metadata_source,
 			sample_id_pattern = sample_id_pattern ,
 			pop_colors = pop_colors,
 			pop_levels = pop_levels,
-			path_to_markers = path_to_markers
 	}
 
 	output {
-		File Distribution_of_COI_by_sampling_location_f = report_layouting_process.Distribution_of_COI_by_sampling_location
-		File Plot_temporal_collection_of_samples_monthly_f = report_layouting_process.Plot_temporal_collection_of_samples_monthly
-		File Distribution_of_number_heterozygous_loci_per_sample_f = report_layouting_process.Distribution_of_number_heterozygous_loci_per_sample
-		File Plot_temporal_collection_of_samples_quarterly_f = report_layouting_process.Plot_temporal_collection_of_samples_quarterly
-		File Plot_locus_amplificatin_rate_f = report_layouting_process.Plot_locus_amplificatin_rate
-		File Plot_temporal_collection_of_samples_yearly_f = report_layouting_process.Plot_temporal_collection_of_samples_yearly
-		File Plot_poly_by_pop_over_time_f = report_layouting_process.Plot_poly_by_pop_over_time
-		File Samples_amplification_rate_f = report_layouting_process.Samples_amplification_rate
+		File html_report_f = report_layouting_process.html_report
+		File plot_temporal_collection_of_samples_quarterly_f = report_layouting_process.plot_temporal_collection_of_samples_quarterly
+
+#		File Distribution_of_COI_by_sampling_location_f = report_layouting_process.Distribution_of_COI_by_sampling_location
+#		File Plot_temporal_collection_of_samples_monthly_f = report_layouting_process.Plot_temporal_collection_of_samples_monthly
+#		File Distribution_of_number_heterozygous_loci_per_sample_f = report_layouting_process.Distribution_of_number_heterozygous_loci_per_sample
+#		File Plot_locus_amplificatin_rate_f = report_layouting_process.Plot_locus_amplificatin_rate
+#		File Plot_temporal_collection_of_samples_yearly_f = report_layouting_process.Plot_temporal_collection_of_samples_yearly
+#		File Plot_poly_by_pop_over_time_f = report_layouting_process.Plot_poly_by_pop_over_time
+#		File Samples_amplification_rate_f = report_layouting_process.Samples_amplification_rate
 	}
 }
 
 task report_layouting_process {
 	input {
-		String path_to_cigars
-		String metadata_source
-		File ls_locus_remove
 		String sample_id_pattern = 'SP'
 		String pop_colors
 		String pop_levels
-		File path_to_markers
 	}
 
 	command <<<
 	set -euxo pipefail
 	#set -x
-	mkdir Data
+	mkdir Results
 
 	gsutil ls ~{path_to_cigars}
-	gsutil -m cp -r ~{path_to_cigars}* Data/
+	gsutil -m cp -r ~{path_to_cigars}* .
+	unzip mhap_metadata.zip
+
 	find . -type f
 	Rscript Code/mhap_scripts.R -c Data/cigar_tables/ -m ~{metadata_source} -l ~{ls_locus_remove} -s ~{sample_id_pattern} -pc ~{pop_colors} -pl ~{pop_levels} -pm ~{path_to_markers}
+	Rscript render_report.R -c cigar_tables/ -m Gates_Colombia_metadata.csv -l locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm markers.csv
+	
 	>>>
 
 	output {
-		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"
-		File Plot_temporal_collection_of_samples_monthly = "File plot_temporal_collection_of_samples_monthly.pdf"
-		File Distribution_of_number_heterozygous_loci_per_sample = "File distribution_of_number_heterozygous_loci_per_sample.pdf"
-		File Plot_temporal_collection_of_samples_quarterly = "File plot_temporal_collection_of_samples_quarterly.pdf"
-		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
-		File Plot_temporal_collection_of_samples_yearly = "File plot_temporal_collection_of_samples_yearly.pdf"
-		File Plot_poly_by_pop_over_time = "File plot_poly_by_pop_over_time.pdf"
-		File Samples_amplification_rate = "File samples_amplification_rate.pdf"
+		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
+		File html_report = "mhap_analysis_program.html"
+
+#		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
+#		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"
+#		File Plot_temporal_collection_of_samples_monthly = "File plot_temporal_collection_of_samples_monthly.pdf"
+#		File Distribution_of_number_heterozygous_loci_per_sample = "File distribution_of_number_heterozygous_loci_per_sample.pdf"
+#		File Plot_temporal_collection_of_samples_yearly = "File plot_temporal_collection_of_samples_yearly.pdf"
+#		File Plot_poly_by_pop_over_time = "File plot_poly_by_pop_over_time.pdf"
+#		File Samples_amplification_rate = "File samples_amplification_rate.pdf"
 	}
 
 	runtime {
