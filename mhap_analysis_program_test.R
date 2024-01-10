@@ -1,28 +1,34 @@
-source('/amplseq_required_libraries.R')
-source('/amplseq_functions.R')
+#source('/amplseq_required_libraries.R')
+#source('/amplseq_functions.R')
+source('amplseq_required_libraries.R')
+source('amplseq_functions.R')
 
 library(argparse)
 
 # Create ArgumentParser object
-params <- ArgumentParser()
+parser <- ArgumentParser()
  
 # Define arguments
-params$add_argument("-c", "--cigar_paths", help="Path to cigar tables")
-params$add_argument("-m", "--metadata_source", help="Metadata source file")
-params$add_argument("-l", "--ls_locus_remove", help="File with loci to remove") #Move this to a file
-params$add_argument("-s", "--sample_id_pattern", help="Sample ID pattern")
-params$add_argument("-pc", "--pop_colors", help="Population colors")
-params$add_argument("-pl", "--pop_levels", help="Population levels")
-params$add_argument("-pm", "--path_to_markers", help="Path to markers file")
-params$add_argument("-gn", "--gene_names", help="Gene names")
-params$add_argument("-gi", "--gene_ids", help="Gene IDs")
-params$add_argument("-ra", "--reference_alleles", help="Reference alleles file")
-params$add_argument("-g", "--gff_file", help="Path to GFF file")
-params$add_argument("-f", "--fasta_file", help="Path to FASTA file")
-params$add_argument("-v", "--variables", help="Variables")
-params$add_argument("-cq", "--collection_quarter", help="Collection quarters")
-params$add_argument("-fil", "--filters", help="Filters")
-params$add_argument("-pp", "--pop_pairs", help="Population pairs")
+parser$add_argument("-c", "--cigar_paths", help="Path to cigar tables")
+parser$add_argument("-m", "--metadata_source", help="Metadata source file")
+parser$add_argument("-l", "--ls_locus_remove", help="File with loci to remove") #Move this to a file
+parser$add_argument("-s", "--sample_id_pattern", help="Sample ID pattern")
+parser$add_argument("-pc", "--pop_colors", help="Population colors")
+parser$add_argument("-pl", "--pop_levels", help="Population levels")
+parser$add_argument("-pm", "--path_to_markers", help="Path to markers file")
+parser$add_argument("-gn", "--gene_names", help="Gene names")
+parser$add_argument("-gi", "--gene_ids", help="Gene IDs")
+parser$add_argument("-ra", "--reference_alleles", help="Reference alleles file")
+parser$add_argument("-g", "--gff_file", help="Path to GFF file")
+parser$add_argument("-f", "--fasta_file", help="Path to FASTA file")
+parser$add_argument("-v", "--variables", help="Variables")
+parser$add_argument("-cq", "--collection_quarter", help="Collection quarters")
+parser$add_argument("-fil", "--filters", help="Filters")
+parser$add_argument("-pp", "--pop_pairs", help="Population pairs")
+
+params = parser$parse_args()
+
+print(params)
 
 cigar_paths <- params$cigar_paths
 metadata_source <- params$metadata_source
