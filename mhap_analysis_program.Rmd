@@ -36,8 +36,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r 'Loading libraries and parameters', echo=FALSE, results='hide'}
-source('amplseq_required_libraries.R')
-source('amplseq_functions.R')
+source('/amplseq_required_libraries.R')
+source('/amplseq_functions.R')
 
 cigar_paths <- params$cigar_paths
 metadata_source <- params$metadata_source

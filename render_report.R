@@ -26,7 +26,7 @@ parser$add_argument("-pp", "--pop_pairs", help="Population pairs")
 args <- parser$parse_args()
   
 # Assign variables based on command-line arguments
-render("mhap_analysis_program.Rmd", params = list(
+render("/mhap_analysis_program.Rmd", params = list(
   cigar_paths = args$cigar_paths,
   metadata_source = args$metadata_source,
   ls_locus_remove = args$ls_locus_remove,
