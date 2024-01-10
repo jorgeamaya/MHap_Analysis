@@ -26,12 +26,14 @@ RUN mamba config \
     r-biocmanager=1.30.22 \
     bioconductor-biostrings=2.66.0 \ 
     r-argparse=2.2.2 \
+    unzip=6.0 \
     -c conda-forge -c bioconda && \
     mamba clean --all -f -y && \
     echo "source activate layout_env" > ~/.bashrc
 
 ENV PATH /opt/conda/envs/layout_env/bin:$PATH
 ENV PATH /opt/conda/envs/layout_env/bin/python:$PATH
+ENV PATH /opt/conda/envs/layout_env/bin/unzip:$PATH
 SHELL ["conda", "run", "-n", "layout_env", "/bin/bash", "-c"]
 
 RUN apt-get update -y && apt-get install -y curl gnupg1 python3
