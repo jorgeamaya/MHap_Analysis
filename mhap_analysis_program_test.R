@@ -26,6 +26,14 @@ cigar_paths <- params$cigar_paths
 metadata_source <- params$metadata_source
 ls_locus_remove <- params$ls_locus_remove
 sample_id_pattern <- params$sample_id_pattern
+
+print(cigar_paths)
+print(metadata_source)
+print(ls_locus_remove)
+print(sample_id_pattern)
+print(params$pop_colors)
+print(params$pop_levels)
+
 pop_colors <- unlist(strsplit(params$pop_colors, ","))
 pop_levels <- adjust_camel_case_name(unlist(strsplit(params$pop_levels, ",")))
 pop_levels = factor(pop_levels, levels = pop_levels)
