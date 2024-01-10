@@ -52,3 +52,4 @@ COPY col_pairwise_relatedness.csv col_pairwise_relatedness.csv
 COPY hmmloglikelihood.cpp hmmloglikelihood.cpp
 COPY mhap_analysis_program.Rmd mhap_analysis_program.Rmd
 COPY render_report.R render_report.R
+COPY mhap_analysis_program_test.R mhap_analysis_program_test.R
