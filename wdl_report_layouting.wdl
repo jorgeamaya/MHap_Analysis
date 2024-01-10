@@ -44,11 +44,13 @@ task report_layouting_process {
 	mkdir Results
 
 	gsutil -m cp -r ~{path_to_metadata}* .
+	find . -type f
 	unzip mhap_metadata.zip
 
 	find . -type f
 	Rscript render_report.R -c cigar_tables/ -m Gates_Colombia_metadata.csv -l locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm markers.csv
 	
+	find . -type f
 	>>>
 
 	output {
