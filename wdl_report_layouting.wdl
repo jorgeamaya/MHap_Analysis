@@ -2,6 +2,7 @@ version 1.0
 
 workflow report_layouting {
 	input {
+		String path_to_metadata
 		String sample_id_pattern = 'SP'
 		String pop_colors
 		String pop_levels
@@ -9,9 +10,10 @@ workflow report_layouting {
 
 	call report_layouting_process {
 		input:	
-			sample_id_pattern = sample_id_pattern ,
+			path_to_metadata = path_to_metadata,
+			sample_id_pattern = sample_id_pattern,
 			pop_colors = pop_colors,
-			pop_levels = pop_levels,
+			pop_levels = pop_levels
 	}
 
 	output {
@@ -30,6 +32,7 @@ workflow report_layouting {
 
 task report_layouting_process {
 	input {
+		String path_to_metadata
 		String sample_id_pattern = 'SP'
 		String pop_colors
 		String pop_levels
@@ -40,19 +43,17 @@ task report_layouting_process {
 	#set -x
 	mkdir Results
 
-	gsutil ls ~{path_to_cigars}
-	gsutil -m cp -r ~{path_to_cigars}* .
+	gsutil -m cp -r ~{path_to_metadata}* .
 	unzip mhap_metadata.zip
 
 	find . -type f
-	Rscript Code/mhap_scripts.R -c Data/cigar_tables/ -m ~{metadata_source} -l ~{ls_locus_remove} -s ~{sample_id_pattern} -pc ~{pop_colors} -pl ~{pop_levels} -pm ~{path_to_markers}
 	Rscript render_report.R -c cigar_tables/ -m Gates_Colombia_metadata.csv -l locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm markers.csv
 	
 	>>>
 
 	output {
-		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
 		File html_report = "mhap_analysis_program.html"
+		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
 
 #		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
 #		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"
