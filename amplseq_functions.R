@@ -1490,7 +1490,7 @@ fs_checks <- function(fs, warn,
 # estimate_r_and_k----
 
 library(Rcpp)
-sourceCpp('hmmloglikelihood.cpp')
+sourceCpp('/hmmloglikelihood.cpp')
 
 estimate_r_and_k <- function(fs, ds, Ys, epsilon = 0.001, rho = 7.4 * 10 ^ (-7),
                              kinit = 50, rinit = 0.5, warn_fs = TRUE) {
