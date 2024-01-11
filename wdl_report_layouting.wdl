@@ -45,15 +45,18 @@ task report_layouting_process {
 	cat Results/testfile.txt
 
 	gsutil -m cp -r ~{path_to_metadata}* .
-	find . -name '.*' -print
-	unzip mhap_metadata.zip
+	find . -type f
+	find . -type d
 
-	find . -name '.*' -print
+	unzip mhap_metadata.zip
+	find . -type f
+	find . -type d
+
 	Rscript /render_report.R -c /mhap_metadata/cigar_tables/ -m /mhap_metadata/Gates_Colombia_metadata.csv -l /mhap_metadata/locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm /mhap_metadata/markers.csv
 	#Rscript /mhap_analysis_program_test.R -c /mhap_metadata/cigar_tables/ -m /mhap_metadata/Gates_Colombia_metadata.csv -l /mhap_metadata/locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm /mhap_metadata/markers.csv
 	
-	find . -name '.*' -print
-#	find . -type f
+	find . -type f
+	find . -type d
 	>>>
 
 	output {
