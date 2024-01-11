@@ -46,3 +46,5 @@ render("/mhap_analysis_program.Rmd", params = list(
   collection_quarter = args$collection_quarter
 ),
   output_dir = "/Results/")
+
+print("Leaving render script")
