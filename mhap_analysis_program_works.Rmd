@@ -1,0 +1,130 @@
+---
+title: "Microhaplotype analysis"
+author: "Jorge Eduardo Amaya Romero"
+date: "2022-09-27"
+output:
+  html_document:
+    toc: yes
+    number_sections: yes
+    toc_float: yes
+    code_folding: show
+editor_options:
+  markdown:
+    wrap: 72
+  chunk_output_type: inline
+params:
+  cigar_paths: "placeholder"
+  metadata_source: "placeholder"
+  ls_locus_remove: "placeholder"
+  sample_id_pattern: "placeholder"
+  pop_colors: "placeholder"
+  pop_levels: "placeholder"
+  path_to_markers: "placeholder"
+  gene_names: "placeholder"
+  gff_file: "placeholder"
+  reference_alleles: "placeholder"
+  fasta_file: "placeholder"
+  gene_ids: "placeholder"
+  variables: "placeholder"
+  collection_quarter: "placeholder"
+---
+
+The following report provides a summary of analysis of genotyping information generated through amplicon sequencing (also called Microhaplotype genotyping).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r 'Loading libraries and parameters', echo=FALSE, results='hide'}
+source('/amplseq_required_libraries.R')
+source('/amplseq_functions.R')
+
+cigar_paths <- params$cigar_paths
+metadata_source <- params$metadata_source
+ls_locus_remove <- params$ls_locus_remove
+sample_id_pattern <- params$sample_id_pattern
+pop_colors <- unlist(strsplit(params$pop_colors, ","))
+pop_levels <- adjust_camel_case_name(unlist(strsplit(params$pop_levels, ",")))
+pop_levels = factor(pop_levels, levels = pop_levels)
+path_to_markers <- params$path_to_markers
+
+if ("pop_pairs" %in% names(params)) {
+ pop_pairs <- params$pop_pairs
+} else {
+ pop_pairs = combn(sort(as.character(pop_levels)), 2, function(x) paste(x, collapse = "-"))
+}
+gene_names <- params$gene_names
+gff_file <- params$gff_file
+reference_alleles <- params$reference_alleles
+fasta_file <- params$fasta_file
+gene_ids <- params$gene_ids
+variables <- params$variables
+collection_quarter <- params$collection_quarter
+```
+
+```{r}
+#Load the cigar objects and metadata and merge them
+cigar_object = read_cigar_tables(paths = cigar_paths, sample_id_pattern = sample_id_pattern)
+metadata = read.csv(metadata_source)
+cigar_object@metadata = merge(cigar_object@metadata,
+                               metadata,
+                               by = 'Sample_id',
+                               all.x = T)
+
+#Remove certain locus if requested
+if (file.exists(ls_locus_remove)) {
+  loci <- read.table(ls_locus_remove, header = FALSE, colClasses = "character", stringsAsFactors = FALSE)$V1
+  for (locus in loci) {
+    cigar_object@cigar_table = cigar_object@cigar_table[,!grepl(locus, colnames(cigar_object@cigar_table))]
+  }
+}
+
+# Define the geographic unit of analysis and assign them colors
+if (length(pop_colors) == length(pop_levels)) {
+  pop_colors = pop_colors
+} else {
+  pop_colors = replicate(n, paste0("#", paste0(sample(0:255, 3, replace = TRUE), collapse = "")))
+}
+names(pop_levels) = pop_colors
+
+print(pop_levels)
+```
+
+Loaded data
+
+```{r}
+# Genotyped samples by Municipality over time
+# Plot the sample size (number of genotyped samples) by Municipality over time.
+# Quarterly plot
+dates = sort(unique(cigar_object@metadata$Quarter_of_Collection))
+
+plot_temporal_collection_of_samples = cigar_object@metadata %>%
+  filter(!is.na(Subnational_level2)) %>% # Remove samples with no geographic information (Controls)
+  summarise(nsamples= n(), .by = c(Subnational_level2, Quarter_of_Collection)) %>%
+  ggplot(aes(x = Quarter_of_Collection, y = nsamples, fill = factor(Subnational_level2,
+                                                                    levels = pop_levels))) +
+  geom_col() +
+  theme_bw() +
+  scale_fill_manual(values = pop_colors) +
+  facet_wrap(.~factor(Subnational_level2,
+                      levels = pop_levels),
+             strip.position = "top", ncol = 5) +
+  labs(title = 'Number of Samples collected over time',
+       y = "Collected samples by PCD",
+       x = "Quarter") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+        legend.position =  "none")
+
+pdf("Results/plot_temporal_collection_of_samples_quarterly.pdf", width = 14)
+plot_temporal_collection_of_samples
+dev.off()
+
+print(dates)
+```
+
+The following plots show the sample size (number of genotyped samples) by Municipality over Quarters of Collection
+```{r}
+plot_temporal_collection_of_samples
+```
+
+Watermark 7
