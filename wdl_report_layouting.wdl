@@ -41,7 +41,8 @@ task report_layouting_process {
 	command <<<
 	set -euxo pipefail
 	mkdir Results
-	cat "Test" > /Results/testfile.txt
+	cat "Test" > Results/testfile.txt
+	cat Results/testfile.txt
 
 	gsutil -m cp -r ~{path_to_metadata}* .
 	find . -type f
