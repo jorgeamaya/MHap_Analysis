@@ -53,3 +53,7 @@ COPY hmmloglikelihood.cpp hmmloglikelihood.cpp
 COPY mhap_analysis_program.Rmd mhap_analysis_program.Rmd
 COPY render_report.R render_report.R
 COPY mhap_analysis_program_test.R mhap_analysis_program_test.R
+
+#COPY mhap_metadata.zip mhap_metadata.zip
+#COPY wdl_placeholde.sh wdl_placeholde.sh
+#RUN chmod 755 wdl_placeholde.sh
