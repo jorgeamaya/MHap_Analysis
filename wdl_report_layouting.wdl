@@ -41,7 +41,7 @@ task report_layouting_process {
 	command <<<
 	set -euxo pipefail
 	#set -x
-	mkdir Results
+	mkdir /Results
 
 	gsutil -m cp -r ~{path_to_metadata}* .
 	find . -type f
@@ -55,8 +55,8 @@ task report_layouting_process {
 	>>>
 
 	output {
-		File html_report = "/mhap_analysis_program.html"
-		File plot_temporal_collection_of_samples_quarterly = "/Results/plot_temporal_collection_of_samples_quarterly.pdf"
+		File html_report = "mhap_analysis_program.html"
+		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
 
 #		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
 #		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"

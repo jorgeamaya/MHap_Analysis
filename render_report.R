@@ -43,4 +43,5 @@ render("/mhap_analysis_program.Rmd", params = list(
   gene_ids = args$gene_ids,
   variables = args$variables,
   collection_quarter = args$collection_quarter
-))
+),
+  out_dir = "/Results/")
