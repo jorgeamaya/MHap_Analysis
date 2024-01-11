@@ -26,6 +26,7 @@ parser$add_argument("-pp", "--pop_pairs", help="Population pairs")
 args <- parser$parse_args()
 
 print(args)
+getwd()
   
 # Assign variables based on command-line arguments
 render("/mhap_analysis_program.Rmd", params = list(
@@ -44,4 +45,4 @@ render("/mhap_analysis_program.Rmd", params = list(
   variables = args$variables,
   collection_quarter = args$collection_quarter
 ),
-  out_dir = "/Results/")
+  output_dir = "/Results/")
