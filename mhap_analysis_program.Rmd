@@ -3,11 +3,8 @@ title: "Microhaplotype analysis"
 author: "Jorge Eduardo Amaya Romero"
 date: "2022-09-27"
 output:
-  html_document:
+  word_document:
     toc: yes
-    number_sections: yes
-    toc_float: yes
-    code_folding: show
 editor_options:
   markdown:
     wrap: 72
@@ -62,4 +59,9 @@ variables <- params$variables
 collection_quarter <- params$collection_quarter
 ```
 
-Watermark 1
+#  html_document:
+#    toc: yes
+#    number_sections: yes
+#    toc_float: yes
+#    code_folding: show
+Watermark 2

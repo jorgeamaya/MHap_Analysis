@@ -60,7 +60,7 @@ task report_layouting_process {
 	>>>
 
 	output {
-		File html_report = "Results/mhap_analysis_program.html"
+		File html_report = "Results/mhap_analysis_program.docx"
 		#File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
 
 #		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
