@@ -187,4 +187,63 @@ The following plots show the sample size (number of genotyped samples) by Munici
 plot_temporal_collection_of_samples
 ```
 
-Watermark 1
+# Amplification rate per loci
+
+The proportion of samples that have been amplified by each amplicon marker. The threshold defines the minimum proportion of samples that a marker should amplify in order to be keep it for further analysis (default 0.65) ADD AN ARGUMENTS FOR THIS. All markers below this threshold will be discarded.
+
+```{r}
+markers = read.csv(path_to_markers)
+ampseq = cigar2ampseq(cigar_object, markers = markers, min_abd = 10, min_ratio = .1, remove_controls = T)
+
+ampseq_filtered = locus_amplification_rate(ampseq, threshold = .65)
+
+# Plot Amplification rate per loci ----
+plot_locus_amplificatin_rate = ggdraw()+
+  draw_plot(ampseq_filtered@plots$amplification_rate_per_locus+
+              theme(axis.text = element_text(size = 12),
+                    axis.title = element_text(size = 12),
+                    legend.text = element_text(size = 12)),
+            x = 0,
+            y = 0,
+            width = 1,
+            height = .5)+
+  draw_plot(ampseq_filtered@plots$all_loci_amplification_rate+
+              theme(axis.text = element_text(size = 12),
+                    axis.title = element_text(size = 12)),
+            x = 0,
+            y = .5,
+            width = 1,
+            height = .5)
+
+pdf("/cromwell_root/Results/plot_locus_amplificatin_rate.pdf")
+plot_locus_amplificatin_rate
+dev.off()
+```
+
+```{r}
+plot_locus_amplificatin_rate
+```
+
+Thus in this data set `r ncol(ampseq@gt)` loci had an amplification rate above 0.65, and `r ncol(ampseq_filtered@discarded_loci$gt)` loci were discarded. The discarded loci were: `r paste(colnames(ampseq@discarded_loci$gt), collapse = ', ')`.
+
+# Amplification rate by sample
+
+The proportion of loci amplified per each sample, also called the amplification rate of the samples. The threshold defines the minimum proportion of loci that a sample should have amplified (by default 0.8). FIX THIS TO MAKE IT VARIABLE
+
+```{r}
+ampseq_filtered = sample_amplification_rate(ampseq_filtered)
+
+pdf("/cromwell_root/Results/samples_amplification_rate.pdf")
+ampseq_filtered@plots$samples_amplification_rate+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12))
+dev.off()
+```
+
+```{r}
+ampseq_filtered@plots$samples_amplification_rate+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12))
+```
+
+Watermark 2
