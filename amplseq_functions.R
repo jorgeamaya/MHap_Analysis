@@ -2345,3 +2345,5 @@ format_pop_pairs <- function(pop_pairs) {
 adjust_camel_case_name <- function(strings) {
   gsub("(?<=[a-z])(?=[A-Z])", " ", strings, perl = TRUE)
 }
+
+print("Functions succesfully loaded")

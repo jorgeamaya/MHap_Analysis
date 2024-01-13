@@ -96,3 +96,5 @@ if (!require("argparse", quietly = TRUE)) {
   install.packages("argparse")
   library(argparse)
 }
+
+print("Libraries successfully loaded")
