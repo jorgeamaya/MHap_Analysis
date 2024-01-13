@@ -128,4 +128,63 @@ The following plots show the sample size (number of genotyped samples) by Munici
 plot_temporal_collection_of_samples
 ```
 
-Watermark 7
+```{r}
+dates = sort(unique(cigar_object@metadata$Month_of_Collection))
+plot_temporal_collection_of_samples = cigar_object@metadata %>%
+  filter(!is.na(Subnational_level2)) %>% # Remove samples with no geographic information (Controls)
+  summarise(nsamples= n(), .by = c(Subnational_level2, Month_of_Collection)) %>%
+  ggplot(aes(x = Month_of_Collection, y = nsamples, fill = factor(Subnational_level2,
+                                                                    levels = pop_levels))) +
+  geom_col() +
+  theme_bw() +
+  scale_fill_manual(values = pop_colors) +
+  facet_wrap(.~factor(Subnational_level2,
+                      levels = pop_levels),
+             strip.position = "top", ncol = 5) +
+  labs(title = 'Number of Samples collected over time',
+       y = "Collected samples by PCD",
+       x = "Month") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+        legend.position =  "none")
+
+pdf("/cromwell_root/Results/plot_temporal_collection_of_samples_monthly.pdf", width = 14)
+plot_temporal_collection_of_samples
+dev.off()
+```
+
+The following plots show the sample size (number of genotyped samples) by Municipality over Months of Collection
+```{r}
+plot_temporal_collection_of_samples
+```
+
+```{r}
+# Yearly plot
+dates = sort(unique(cigar_object@metadata$Year_of_Collection))
+plot_temporal_collection_of_samples = cigar_object@metadata %>%
+  filter(!is.na(Subnational_level2)) %>% # Remove samples with no geographic information (Controls)
+  summarise(nsamples= n(), .by = c(Subnational_level2, Year_of_Collection)) %>%
+  ggplot(aes(x = Year_of_Collection, y = nsamples, fill = factor(Subnational_level2,
+                                                                  levels = pop_levels))) +
+  geom_col() +
+  theme_bw() +
+  scale_fill_manual(values = pop_colors) +
+  facet_wrap(.~factor(Subnational_level2,
+                      levels = pop_levels),
+             strip.position = "top", ncol = 5) +
+  labs(title = 'Number of Samples collected over time',
+       y = "Collected samples by PCD",
+       x = "Year") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+        legend.position =  "none")
+
+pdf("/cromwell_root/Results/plot_temporal_collection_of_samples_yearly.pdf", width = 14)
+plot_temporal_collection_of_samples
+dev.off()
+```
+
+The following plots show the sample size (number of genotyped samples) by Municipality over Year of Collection
+```{r}
+plot_temporal_collection_of_samples
+```
+
+Watermark 1

@@ -19,11 +19,11 @@ workflow report_layouting {
 	output {
 		File html_report_f = report_layouting_process.html_report
 		File plot_temporal_collection_of_samples_quarterly_f = report_layouting_process.plot_temporal_collection_of_samples_quarterly
+		File plot_temporal_collection_of_samples_yearly_f = report_layouting_process.plot_temporal_collection_of_samples_yearly
+		File plot_temporal_collection_of_samples_monthly_f = report_layouting_process.plot_temporal_collection_of_samples_monthly
 #		File Distribution_of_COI_by_sampling_location_f = report_layouting_process.Distribution_of_COI_by_sampling_location
-#		File Plot_temporal_collection_of_samples_monthly_f = report_layouting_process.Plot_temporal_collection_of_samples_monthly
 #		File Distribution_of_number_heterozygous_loci_per_sample_f = report_layouting_process.Distribution_of_number_heterozygous_loci_per_sample
 #		File Plot_locus_amplificatin_rate_f = report_layouting_process.Plot_locus_amplificatin_rate
-#		File Plot_temporal_collection_of_samples_yearly_f = report_layouting_process.Plot_temporal_collection_of_samples_yearly
 #		File Plot_poly_by_pop_over_time_f = report_layouting_process.Plot_poly_by_pop_over_time
 #		File Samples_amplification_rate_f = report_layouting_process.Samples_amplification_rate
 	}
@@ -61,11 +61,11 @@ task report_layouting_process {
 	output {
 		File html_report = "Results/mhap_analysis_program.html"
 		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
+		File plot_temporal_collection_of_samples_yearly = "Results/plot_temporal_collection_of_samples_yearly.pdf"
+		File plot_temporal_collection_of_samples_monthly = "Results/plot_temporal_collection_of_samples_monthly.pdf"
 #		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
 #		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"
-#		File Plot_temporal_collection_of_samples_monthly = "File plot_temporal_collection_of_samples_monthly.pdf"
 #		File Distribution_of_number_heterozygous_loci_per_sample = "File distribution_of_number_heterozygous_loci_per_sample.pdf"
-#		File Plot_temporal_collection_of_samples_yearly = "File plot_temporal_collection_of_samples_yearly.pdf"
 #		File Plot_poly_by_pop_over_time = "File plot_poly_by_pop_over_time.pdf"
 #		File Samples_amplification_rate = "File samples_amplification_rate.pdf"
 	}
