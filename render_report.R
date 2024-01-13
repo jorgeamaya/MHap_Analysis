@@ -45,6 +45,6 @@ render("/mhap_analysis_program.Rmd", params = list(
   variables = args$variables,
   collection_quarter = args$collection_quarter
 ),
-  output_dir = "/Results/")
+  output_dir = "/cromwell_root/Results/")
 
 print("Leaving render script")
