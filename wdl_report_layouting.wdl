@@ -18,7 +18,7 @@ workflow report_layouting {
 
 	output {
 		File html_report_f = report_layouting_process.html_report
-		File plot_temporal_collection_of_samples_quarterly_f = report_layouting_process.plot_temporal_collection_of_samples_quarterly
+		#File plot_temporal_collection_of_samples_quarterly_f = report_layouting_process.plot_temporal_collection_of_samples_quarterly
 
 #		File Distribution_of_COI_by_sampling_location_f = report_layouting_process.Distribution_of_COI_by_sampling_location
 #		File Plot_temporal_collection_of_samples_monthly_f = report_layouting_process.Plot_temporal_collection_of_samples_monthly
@@ -61,7 +61,7 @@ task report_layouting_process {
 
 	output {
 		File html_report = "Results/mhap_analysis_program.html"
-		File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
+		#File plot_temporal_collection_of_samples_quarterly = "Results/plot_temporal_collection_of_samples_quarterly.pdf"
 
 #		File Plot_locus_amplificatin_rate = "File plot_locus_amplificatin_rate.pdf"
 #		File Distribution_of_COI_by_sampling_location = "File distribution_of_COI_by_sampling_location.pdf"
