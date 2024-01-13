@@ -25,7 +25,7 @@ workflow report_layouting {
 		File plot_locus_amplificatin_rate_f = report_layouting_process.plot_locus_amplificatin_rate
 		File distribution_of_COI_by_sampling_location_f = report_layouting_process.distribution_of_COI_by_sampling_location
 		File distribution_of_number_heterozygous_loci_per_sample_f = report_layouting_process.distribution_of_number_heterozygous_loci_per_sample
-#		File Plot_poly_by_pop_over_time_f = report_layouting_process.Plot_poly_by_pop_over_time
+		File plot_poly_by_pop_over_time_f = report_layouting_process.plot_poly_by_pop_over_time
 	}
 }
 
@@ -67,7 +67,7 @@ task report_layouting_process {
 		File samples_amplification_rate = "Results/samples_amplification_rate.pdf"
 		File distribution_of_COI_by_sampling_location = "Results/distribution_of_COI_by_sampling_location.pdf"
 		File distribution_of_number_heterozygous_loci_per_sample = "Results/distribution_of_number_heterozygous_loci_per_sample.pdf"
-		#File Plot_poly_by_pop_over_time = "Results/plot_poly_by_pop_over_time.pdf"
+		File plot_poly_by_pop_over_time = "Results/plot_poly_by_pop_over_time.pdf"
 	}
 
 	runtime {

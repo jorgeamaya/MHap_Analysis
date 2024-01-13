@@ -300,4 +300,49 @@ dev.off()
 plot_log_coi_by_pop
 ```
 
-Watermark 2
+#plot_poly_by_pop_over_time
+
+```{r}
+ampseq_filtered@metadata %<>% mutate(Pop_quarter = paste(Subnational_level2, Quarter_of_Collection, sep = '_'))
+
+plot_poly_by_pop_over_time = get_polygenomic(ampseq_object = ampseq_filtered, strata = "Pop_quarter", update_popsummary = F, na.rm = TRUE, filters = NULL)
+
+plot_poly_by_pop_over_time = plot_poly_by_pop_over_time %>% filter(grepl(paste(pop_levels, collapse = "|"), pop))%>%
+  mutate(
+    Population = stringr::str_split(pop, '_', simplify = TRUE)[,1],
+    Date = stringr::str_split(pop, '_', simplify = TRUE)[,2],
+    prop_poly_lower = case_when(
+      prop_poly == 0 ~ 0,
+      prop_poly != 0 ~ prop_poly_lower),
+    prop_poly_upper = case_when(
+      prop_poly == 0 ~ 0,
+      prop_poly != 0 ~ prop_poly_upper)
+  )%>%
+  ggplot(aes(x = Date,
+             y = prop_poly,
+             ymin = prop_poly_lower,
+             ymax = prop_poly_upper,
+             fill = factor(Population, levels = pop_levels)))+
+  geom_col()+
+  geom_errorbar(width = .2)+
+  facet_wrap(~factor(Population, levels = pop_levels), ncol = 5)+
+  theme_bw()+
+  scale_fill_manual(values = pop_colors)+
+  labs(title = 'Temporal change of the proportion of polyclonal infections',
+       y = "Polyclonal infections",
+       x = "Date of Collection")+
+  theme(axis.text = element_text(size = 10),
+        axis.text.x = element_text(angle = 315, vjust = 0),
+        axis.title = element_text(size = 12),
+        strip.text = element_text(size = 12),
+        legend.position =  "none")
+
+pdf("/cromwell_root/Results/plot_poly_by_pop_over_time.pdf")
+plot_poly_by_pop_over_time
+dev.off()
+```
+
+```{r}
+plot_poly_by_pop_over_time
+```
+Watermark 3
