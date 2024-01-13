@@ -60,6 +60,8 @@ fasta_file <- params$fasta_file
 gene_ids <- params$gene_ids
 variables <- params$variables
 collection_quarter <- params$collection_quarter
+filters = c(paste("Subnational_level2;", paste(pop_levels, collapse = ",")),
+            paste("Quarter_of_Collection;", paste(collection_quarter, collapse = ",")))
 ```
 
 ```{r}
@@ -345,4 +347,275 @@ dev.off()
 ```{r}
 plot_poly_by_pop_over_time
 ```
-Watermark 3
+
+# Tested up to this point
+
+# Distribution of relatedness by study area
+FIX THE TABLE SHOWING. ASK PAULO.
+RETHINK THE IMPLIMENTIATION OF THE PAIRWISE RELATEDNESS ALGORITHM BECAUSE OF CALCULATION TIMES
+
+```{r}
+# generating the loci_object----
+loci_object = ampseq2loci(ampseq_filtered)
+
+# measuring relatedness----
+pairwise_relatedness = NULL
+
+pairwise_relatedness = read.csv('/cromwell_root/mhap_metadata/col_pairwise_relatedness.csv')
+
+#for(w in 1:20){
+#  start = Sys.time()
+#  pairwise_relatedness = rbind(pairwise_relatedness,
+#                               pairwise_hmmIBD(loci_object, parallel = FALSE, w = w, n = 500))
+#  time_diff = Sys.time() - start
+#  print(paste0('step ', w, ' done in ', time_diff, ' secs'))
+#}
+write.csv(pairwise_relatedness, 'Results/col_pairwise_relatedness.csv', row.names = F, quote = F)
+
+plot_relatedness_distribution_within = plot_relatedness_distribution(
+  pairwise_relatedness = pairwise_relatedness,
+  metadata = ampseq_filtered@metadata,
+  Population = 'Subnational_level2',
+  fill_color = pop_colors,
+  type_pop_comparison = 'within',
+  ncol = 5,
+  pop_levels = pop_levels
+)
+
+pdf("/cromwell_root/Results/plot_relatedness_distribution_within.pdf", width = 14)
+plot_relatedness_distribution_within$plot +
+  labs(title = 'Distribution of relatedness by study area')
+dev.off()
+```
+
+```{r}
+plot_relatedness_distribution_within
+```
+
+# plot_frac_highly_related_within
+```{r}
+plot_frac_highly_related_within = plot_frac_highly_related(
+  pairwise_relatedness = pairwise_relatedness,
+  metadata = ampseq@metadata,
+  Population = 'Subnational_level2',
+  fill_color = pop_colors,
+  threshold = 0.99, type_pop_comparison = 'within', pop_levels = pop_levels)
+
+pdf("/cromwell_root/Results/plot_frac_highly_related_within.pdf")
+plot_frac_highly_related_within$plot+
+  labs(title = 'Highly related')
+dev.off()
+```
+
+```{r}
+plot_frac_highly_related_within$plot+
+  labs(title = 'Highly related')
+```
+
+# Proportion of highly related samples over time (IBD > 0.99)
+```{r}
+plot_frac_highly_related_over_quarters_within = plot_frac_highly_related_over_time(pairwise_relatedness = pairwise_relatedness,
+                                                                                   metadata = ampseq@metadata,
+                                                                                   Population = c('Subnational_level2', 'Month_of_Collection'),
+                                                                                   fill_color = pop_colors,
+                                                                                   threshold = 0.99,
+                                                                                   type_pop_comparison = 'within',
+                                                                                   pop_levels = pop_levels, ncol = 1)
+
+pdf("/cromwell_root/Results/plot_frac_highly_related_over_quarters_within.pdf")
+plot_frac_highly_related_over_quarters_within$plot_frac_highly_related +
+  labs(title = 'Proportion of highly related samples over time (IBD > 0.99)',
+       y = 'Proportion')
+dev.off()
+```
+
+```{r}
+plot_frac_highly_related_over_quarters_within$plot_frac_highly_related +
+  labs(title = 'Proportion of highly related samples over time (IBD > 0.99)',
+       y = 'Proportion')
+```
+
+# plot_cor_highlyR_nsamples
+```{r}
+nsamples_vs_highlyR = left_join(plot_frac_highly_related_over_quarters_within$plot_frac_highly_related$data %>% mutate(pop = paste(Pop_comparison, Date_Yi, sep = '_'))%>% ungroup()%>%
+                                  select(pop, prop),
+                                  metadata %>%
+                                  filter(!is.na(Subnational_level2)) %>%
+                                  group_by(Subnational_level2, Month_of_Collection) %>%
+                                  summarise(nsamples= n()) %>% mutate(pop = paste(Subnational_level2, Month_of_Collection, sep = '_')), by = 'pop')  %>%
+                                  filter(prop != 0, Subnational_level2 %in% c(pop_levels))
+
+plot_cor_highlyR_nsamples = ggscatter(nsamples_vs_highlyR, x = "prop", y = "nsamples",
+                                      add = "reg.line", conf.int = TRUE,
+                                      cor.coef = TRUE, cor.method = "spearman",
+                                      title= 'Number of collected samples vs. Proportion of highly related samples',
+                                      xlab = "Proportion of highly related samples", ylab = "Number of samples",
+                                      facet.by = 'Subnational_level2')
+
+pdf("/cromwell_root/Results/plot_cor_highlyR_nsamples.pdf")
+plot_cor_highlyR_nsamples
+dev.off()
+```
+
+```{r}
+plot_cor_highlyR_nsamples
+```
+
+# plot_cor_proppoly_nsamples
+```{r}
+nsamples_vs_proppoly = left_join(plot_poly_by_pop_over_time$data %>% select(pop, prop_poly),
+                                 metadata %>%
+                                   mutate(Quarter_of_Collection = paste(substr(Date_of_Collection, 1, 4), quarters.Date(Date_of_Collection), sep='-'))%>%
+                                   group_by(Subnational_level2, Quarter_of_Collection) %>%
+                                   summarise(nsamples= n()) %>% mutate(pop = paste(Subnational_level2, Quarter_of_Collection, sep = '_')), by = 'pop') %>%
+  filter(Subnational_level2 %in% c(pop_levels))
+
+plot_cor_proppoly_nsamples = ggscatter(nsamples_vs_proppoly, x = "prop_poly", y = "nsamples",
+                                       add = "reg.line", conf.int = TRUE,
+                                       cor.coef = TRUE, cor.method = "spearman",
+                                       title = 'Samples vs. Prop. Poly',
+                                       xlab = "Proportion of polyclonal samples", ylab = "Number of samples", facet.by = 'Subnational_level2')
+
+pdf("/cromwell_root/Results/plot_cor_proppoly_nsamples.pdf")
+plot_cor_proppoly_nsamples
+dev.off()
+```
+
+```{r}
+plot_cor_proppoly_nsamples
+```
+
+# plot_network
+```{r}
+plot_network = plot_network(pairwise_relatedness = pairwise_relatedness,
+                            threshold = .99,
+                            metadata = ampseq_filtered@metadata,
+                            sample_id = 'Sample_id',
+                            group_by = 'Subnational_level2',
+                            levels = pop_levels,
+                            colors = pop_colors)
+
+pdf("/cromwell_root/Results/plot_network.pdf")
+plot_network
+dev.off()
+```
+
+```{r}
+plot_network
+```
+
+# plot_relatedness_distribution_between
+FIX THE TABLE. ASK PAULO.
+```{r}
+plot_relatedness_distribution_between = plot_relatedness_distribution(
+  pairwise_relatedness = pairwise_relatedness,
+  metadata = ampseq_filtered@metadata,
+  Population = 'Subnational_level2',
+  fill_color = rep('gray50', 10),
+  type_pop_comparison = 'between',
+  ncol = 5,
+  pop_levels = pop_pairs
+)
+
+pdf("/cromwell_root/Results/plot_relatedness_distribution_between.pdf", width = 14)
+plot_relatedness_distribution_between$plot+
+  labs(title = 'Distribution of relatedness')
+dev.off()
+```
+
+```{r, echo=FALSE}
+plot_relatedness_distribution_between$plot+
+  labs(title = 'Distribution of relatedness')
+```
+
+# MAP
+```{r}
+## Polygon dot plot of observed G6PDd frequency by LAC country----
+# Define the temporal unit of analysis
+dates = sort(unique(cigar_object@metadata$Month_of_Collection))
+
+plot_temporal_collection_of_samples = cigar_object@metadata %>%
+ filter(!is.na(Subnational_level2)) %>%
+ group_by(Subnational_level2, Month_of_Collection) %>%
+ summarise(nsamples= n())%>%
+ ggplot(aes(x = Month_of_Collection, y = nsamples, fill = factor(Subnational_level2,
+                                                                 levels = pop_levels)))+
+ geom_col()+
+ theme_bw()+
+ scale_fill_manual(values = pop_colors)+
+ facet_wrap(.~factor(Subnational_level2,
+                     levels = pop_levels),
+            strip.position = "top", ncol = 1)+
+ labs(title = 'Samples collected over time',
+      y = "Collected samples by PCD",
+      x = "Months")+
+ theme(axis.text = element_text(size = 12),
+       axis.text.x = element_text(angle = 315, vjust = 0),
+       axis.title = element_text(size = 12),
+       strip.text = element_text(size = 12),
+       legend.position =  "none")+
+ scale_alpha_manual(values = c(1,.6))+
+ scale_x_discrete(limits = dates)
+ 
+# Get all shape files from LAC countries at national level
+# SpatialPolygonsDataFrame at country level (level = 0)
+col0.spldf = gadm_sp_loadCountries("COL",level = 0, basefile = "./GADMTools/world.rds.files/rds0/")
+
+# SpatialPolygonsDataFrame at Municipality level (level = 2)
+col2.spldf = gadm_sp_loadCountries("COL",level = 2, basefile = "./GADMTools/world.rds.files/rds2/")
+
+# Label for Municipalities
+localities = data.frame(Localities = factor(pop_levels,
+                                            levels = pop_levels[5:1]),
+                        long = -70,
+                        lat = c(6, 8, 10, 12, 14),
+                        colors = pop_colors[5:1])
+
+if ('Guapi' %in% pop_levels) {
+  new_pop_levels = levels(pop_levels)
+  new_pop_levels[which('Guapi' == new_pop_levels)] = 'Guapí'
+  pop_levels = new_pop_levels
+  pop_levels = factor(pop_levels, levels = pop_levels)
+  names(pop_levels) = pop_colors
+}
+
+plot_study_sites = ggplot() +
+  geom_polygon(data=col0.spldf$spdf, aes(x=long, y=lat, group = group), fill = "floralwhite", color = "gray40", linewidth=.3)
+
+for (i in 1:length(pop_levels)) {
+  print(pop_levels[i])
+  print(names(pop_levels[i]))
+  temp_spdf = col2.spldf[["spdf"]][col2.spldf[["spdf"]][["NAME_2"]] == pop_levels[i],]
+  temp_polygon = data.frame(long = temp_spdf@polygons[[1]]@Polygons[[1]]@coords[,1],
+                            lat = temp_spdf@polygons[[1]]@Polygons[[1]]@coords[,2])
+  plot_study_sites = plot_study_sites +
+    geom_polygon(data=col2.spldf[["spdf"]][col2.spldf[["spdf"]][["NAME_2"]] == pop_levels[i],], aes(x=long, y=lat, group = group), fill = names(pop_levels[i]), color = "gray40", linewidth=.3)
+}
+
+plot_study_sites = plot_study_sites +
+  geom_point(data=localities, aes(x=0, y=90, color=Localities), size = 5) +
+  theme_bw()+
+  labs(title = "Study sites in Colombia",
+       x = "Longitude",
+       y = "Latitude")+
+  scale_x_continuous(limits = c(-80, -65))+
+  scale_y_continuous(limits = c(-5, 15))+
+  scale_color_manual(values = localities$colors)+
+  theme(legend.position = "right",
+        text = element_text(size = 10),
+        axis.text = element_text(size = 10),
+        title = element_text(size = 10))+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12))
+ 
+#Plot study areas
+pdf("/cromwell_root/Results/plot_study_areas.pdf")
+plot_study_sites
+dev.off()
+```
+
+```{r}
+plot_study_sites
+```
+
+Watermark 4
