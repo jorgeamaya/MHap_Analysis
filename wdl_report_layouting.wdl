@@ -52,7 +52,7 @@ task report_layouting_process {
 	find . -type f
 	find . -type d
 
-	Rscript /render_report.R -c /mhap_metadata/cigar_tables/ -m /mhap_metadata/Gates_Colombia_metadata.csv -l /mhap_metadata/locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm /mhap_metadata/markers.csv
+	Rscript /render_report.R -c /cromwell_root/mhap_metadata/cigar_tables/ -m /cromwell_root/mhap_metadata/Gates_Colombia_metadata.csv -l /cromwell_root/mhap_metadata/locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm /cromwell_root/mhap_metadata/markers.csv
 	#Rscript /mhap_analysis_program_test.R -c /mhap_metadata/cigar_tables/ -m /mhap_metadata/Gates_Colombia_metadata.csv -l /mhap_metadata/locus_remove.csv -s SP -pc ~{pop_colors} -pl ~{pop_levels} -pm /mhap_metadata/markers.csv
 	
 	find . -type f

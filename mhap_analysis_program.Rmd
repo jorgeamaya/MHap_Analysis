@@ -66,6 +66,7 @@ collection_quarter <- params$collection_quarter
 #Load the cigar objects and metadata and merge them
 metadata = read.csv(metadata_source)
 print(metadata_source)
+print(metadata)
 ```
 
 Watermark 6
