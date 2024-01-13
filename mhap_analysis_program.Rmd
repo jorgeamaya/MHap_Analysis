@@ -67,7 +67,6 @@ collection_quarter <- params$collection_quarter
 cigar_object = read_cigar_tables(paths = cigar_paths, sample_id_pattern = sample_id_pattern)
 metadata = read.csv(metadata_source)
 print(metadata_source)
-print(metadata)
 
 cigar_object@metadata = merge(cigar_object@metadata,
                                metadata,
@@ -244,6 +243,61 @@ dev.off()
 ampseq_filtered@plots$samples_amplification_rate+
   theme(axis.text = element_text(size = 12),
         axis.title = element_text(size = 12))
+```
+
+# plot_log_NPolyLoci_by_pop
+
+WRITE THE TEXT FOR THIS PLOT
+
+```{r}
+ampseq_filtered = get_polygenomic(ampseq_object = ampseq_filtered, strata = "Subnational_level2", na.rm = FALSE,
+                                  filters = NULL)
+
+plot_log_NPolyLoci_by_pop = log_scale_histogram(data = ampseq_filtered@metadata[ampseq_filtered@metadata$NPolyLoci != 0,],
+                                                var = "NPolyLoci", binwidth = 1, group_by = "Subnational_level2",
+                                                levels = pop_levels, x_label = "Number of heterozygous loci per sample",
+                                                fill_color = pop_colors,
+                                                y_breaks = c(1, 5,10, 30), ncol = 4)+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        strip.text = element_text(size = 12)) +
+  labs(title = 'Distribution of number of heterozygous loci per sample',
+       y = "# Samples",
+       x = "# heterozygous loci per sample")
+
+pdf("/cromwell_root/Results/distribution_of_number_heterozygous_loci_per_sample.pdf")
+plot_log_NPolyLoci_by_pop
+dev.off()
+```
+
+```{r}
+plot_log_NPolyLoci_by_pop
+```
+
+#plot_log_coi_by_pop
+WRITE THE TEXT FOR THIS PLOT
+
+```{r}
+plot_log_coi_by_pop = log_scale_histogram(data = ampseq_filtered@metadata,
+                                          var = "coi",
+                                          binwidth = 1,
+                                          group_by = "Subnational_level2",
+                                          levels = pop_levels, x_label = "COI",
+                                          fill_color = pop_colors,
+                                          y_breaks = c(1, 10, 100, 400), ncol = 5)+
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        strip.text = element_text(size = 12)) +
+  labs(title = 'Distribution of COI by sampling location',
+       y = "# Samples")
+
+pdf("/cromwell_root/Results/distribution_of_COI_by_sampling_location.pdf")
+plot_log_coi_by_pop
+dev.off()
+```
+
+```{r}
+plot_log_coi_by_pop
 ```
 
 Watermark 2
